@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import React from 'react';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { dehydrate, QueryClient, useQuery } from 'react-query';
 import { getCardData, getExploreData } from '../api/data';
 import Banner from '../components/Banner';
@@ -10,6 +10,7 @@ import Header from '../components/Header';
 import LargeCard from '../components/LargeCard';
 import MediumCard from '../components/MediumCard';
 import SmallCard from '../components/SmallCard';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 
 export interface IExploreData {
   img: string;
@@ -26,6 +27,43 @@ const Home: NextPage = () => {
   //? 변경되지 않는 이미지라 SSR 이후 호출 할 필요가 없다.
   const { data: exploreData } = useQuery('explore', getExploreData, { enabled: false });
   const { data: cardsData } = useQuery('cards', getCardData, { enabled: false });
+
+  //* Live Anywhere 스크롤 관련
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [offsetWidth, setOffsetWidth] = useState(0);
+  const [scrollWidth, setScrollWidth] = useState(0);
+  const menuScrollRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
+
+  useEffect(() => {
+    if (menuScrollRef.current) {
+      setOffsetWidth(menuScrollRef.current.offsetWidth);
+      setScrollWidth(menuScrollRef.current.scrollWidth);
+    }
+  }, []);
+
+  const handleLeftScroll = useCallback(() => {
+    if (menuScrollRef.current) {
+      menuScrollRef.current.scrollTo({ left: scrollLeft - 300, behavior: 'smooth' });
+
+      if (scrollLeft - 300 >= 0) {
+        setScrollLeft(scrollLeft - 300);
+      } else {
+        setScrollLeft(0);
+      }
+    }
+  }, [scrollLeft]);
+
+  const handleRightScroll = useCallback(() => {
+    if (menuScrollRef.current) {
+      menuScrollRef.current.scrollTo({ left: scrollLeft + 300, behavior: 'smooth' });
+
+      if (offsetWidth + scrollLeft + 300 >= scrollWidth) {
+        setScrollLeft(scrollWidth - offsetWidth);
+      } else {
+        setScrollLeft(scrollLeft + 300);
+      }
+    }
+  }, [scrollLeft, offsetWidth, scrollWidth]);
 
   return (
     <div>
@@ -54,10 +92,24 @@ const Home: NextPage = () => {
 
         <section>
           <h2 className="py-8 text-4xl font-semibold">Live Anywhere</h2>
-          <div className="flex p-3 -ml-3 space-x-3 overflow-scroll scrollbar-hide">
-            {cardsData?.map(({ img, title }) => (
-              <MediumCard key={img} img={img} title={title} />
-            ))}
+          <div className="relative">
+            <div
+              ref={menuScrollRef}
+              className="flex p-3 -ml-3 space-x-3 overflow-x-auto scrollbar-hide"
+            >
+              {cardsData?.map(({ img, title }) => (
+                <MediumCard key={img} img={img} title={title} />
+              ))}
+            </div>
+            <button onClick={handleLeftScroll} className="absolute left-0 text-white top-[160px]">
+              <ChevronLeftIcon className="p-2 text-white h-14 hover:bg-gray-300 hover:rounded-full hover:bg-opacity-50" />
+            </button>
+            <button
+              onClick={handleRightScroll}
+              className="absolute right-0  text-white top-[160px]"
+            >
+              <ChevronRightIcon className="p-2 text-white h-14 hover:bg-gray-300 hover:rounded-full hover:bg-opacity-50" />
+            </button>
           </div>
         </section>
 
