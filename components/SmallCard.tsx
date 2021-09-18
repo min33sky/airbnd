@@ -1,6 +1,6 @@
 import React from 'react';
-import { IExploreData } from '../pages';
 import Image from 'next/image';
+import { IExploreData } from '../typings/airbnd';
 
 function SmallCard({ distance, img, location }: IExploreData) {
   return (
