@@ -7,6 +7,7 @@ import { getRoomsData } from '../api/data';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import InfoCard from '../components/InfoCard';
+import Map from '../components/Map';
 
 export interface ISearchQuery {
   location: string;
@@ -67,6 +68,10 @@ function Search({ searchQuery }: ISearch) {
               />
             )
           )}
+        </section>
+
+        <section className="hidden lg:inline-flex lg:min-w-[600px]">
+          <Map searchResults={searchResults} />
         </section>
       </main>
 
