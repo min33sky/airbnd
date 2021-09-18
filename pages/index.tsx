@@ -12,19 +12,8 @@ import MediumCard from '../components/MediumCard';
 import SmallCard from '../components/SmallCard';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/outline';
 
-export interface IExploreData {
-  img: string;
-  location: string;
-  distance: string;
-}
-
-export interface ICardData {
-  img: string;
-  title: string;
-}
-
 const Home: NextPage = () => {
-  //? 변경되지 않는 이미지라 SSR 이후 호출 할 필요가 없다.
+  //? 변경되지 않는 메뉴 이미지라 SSR 이후에 호출 할 필요가 없다.
   const { data: exploreData } = useQuery('explore', getExploreData, { enabled: false });
   const { data: cardsData } = useQuery('cards', getCardData, { enabled: false });
 
@@ -101,14 +90,15 @@ const Home: NextPage = () => {
                 <MediumCard key={img} img={img} title={title} />
               ))}
             </div>
+
             <button onClick={handleLeftScroll} className="absolute left-0 text-white top-[160px]">
-              <ChevronLeftIcon className="p-2 text-white h-14 hover:bg-gray-300 hover:rounded-full hover:bg-opacity-50" />
+              <ChevronLeftIcon className="p-2 text-white h-14 hover:bg-black hover:rounded-full hover:bg-opacity-50" />
             </button>
             <button
               onClick={handleRightScroll}
               className="absolute right-0  text-white top-[160px]"
             >
-              <ChevronRightIcon className="p-2 text-white h-14 hover:bg-gray-300 hover:rounded-full hover:bg-opacity-50" />
+              <ChevronRightIcon className="p-2 text-white h-14 hover:bg-black hover:rounded-full hover:bg-opacity-50" />
             </button>
           </div>
         </section>

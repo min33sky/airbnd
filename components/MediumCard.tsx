@@ -1,6 +1,6 @@
 import React from 'react';
-import { ICardData } from '../pages';
 import Image from 'next/image';
+import { ICardData } from '../typings/airbnd';
 
 function MediumCard({ img, title }: ICardData) {
   return (
